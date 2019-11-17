@@ -51,6 +51,12 @@ class Trip(models.Model):
         verbose_name=_('Trip date')
     )
 
+    num_seats  = models.IntegerField(
+        default=1,
+        verbose_name=_('Number of seats'),
+        help_text=_('Number of seats available')
+    )
+
     def save(self, *args, **kwargs):
         if self.origin == self.destination:
             raise ValidationError(

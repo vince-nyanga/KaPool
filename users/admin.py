@@ -6,6 +6,7 @@ from .forms import CustomUserChangeForm, CustomUserCreationForm
 
 CustomUser = get_user_model()
 
+
 class CustomUserAdmin(UserAdmin):
     """
     Custom user admin
@@ -13,26 +14,41 @@ class CustomUserAdmin(UserAdmin):
 
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    list_display = ['username','first_name', 'last_name', 'email', 'gender', 'birth_date']
+    list_display = ['username', 'first_name',
+                    'last_name', 'email', 'gender', 'birth_date']
     add_fieldsets = (
-            (
-                'User info',
-                {
-                    'classes': ('wide',),
-                    'fields': ('username','email', 'password1', 'password2', 'gender', 'birth_date'),
-                },
-            ),
+        (
+            'User info',
+            {
+                'classes': ('wide',),
+                'fields': (
+                    'username', 
+                    'email', 
+                    'password1', 
+                    'password2', 
+                    'gender', 
+                    'birth_date', 
+                    'profile_pic', # new
+                    ),
+            },
+        ),
     )
 
     fieldsets = (
-            (
-                'User info',
-                {
-                    'classes': ('wide',),
-                    'fields': ('username','email', 'gender', 'birth_date'),
-                },
-            ),
+        (
+            'User info',
+            {
+                'classes': ('wide',),
+                'fields': (
+                    'username', 
+                    'email', 
+                    'gender', 
+                    'birth_date', 
+                    'profile_pic', # new
+                    ),
+            },
+        ),
     )
 
 
-admin.site.register(CustomUser, CustomUserAdmin) 
+admin.site.register(CustomUser, CustomUserAdmin)

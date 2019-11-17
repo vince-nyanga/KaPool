@@ -30,4 +30,5 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'gender',
             'birth_date',
             'url',
+            'profile_pic',
         ]

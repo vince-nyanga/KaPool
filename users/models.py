@@ -11,6 +11,10 @@ GENDER_OPTIONS = (
     ('wont-say', "Won't say"),
 )
 
+def user_profile_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return f'user_{instance.id}/{filename}'
+
 
 class User(AbstractUser):
     """
@@ -31,6 +35,13 @@ class User(AbstractUser):
         blank=True,
         verbose_name=_('Date of birth'),
         help_text=_('Date of birth')
+    )
+
+    profile_pic = models.ImageField(
+        upload_to=user_profile_directory_path,
+        verbose_name=_('Profile Picture'),
+        null=True,
+        blank=True
     )
 
     def __str__(self):
