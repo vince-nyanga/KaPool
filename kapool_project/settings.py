@@ -77,7 +77,7 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
 }
 
 WSGI_APPLICATION = 'kapool_project.wsgi.application'

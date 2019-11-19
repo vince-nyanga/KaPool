@@ -74,3 +74,4 @@ class Trip(models.Model):
     class Meta:
         verbose_name = _('Trip')
         verbose_name_plural = _('Trips')
+        ordering = ['trip_date']

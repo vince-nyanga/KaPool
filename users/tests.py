@@ -1,8 +1,11 @@
 from datetime import date
+import json
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 
 class UserTests(TestCase):
@@ -57,3 +60,135 @@ class UserTests(TestCase):
             )
         error = cm.exception
         self.assertEqual(error.message, 'Birth date cannot be in the future')
+
+
+class UserApiTest(APITestCase):
+    def test_list_user(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username='vince',
+            email='vince@test.com',
+            first_name='Vincent',
+            last_name='Nyanga',
+            password='testpass123'
+        )
+        response = self.client.get('/api/v1/users/')
+        self.assertEqual(json.loads(response.content), [{
+            'username': 'vince',
+            'email': 'vince@test.com',
+            'first_name': 'Vincent',
+            'last_name': 'Nyanga',
+            'gender': 'wont-say',
+            'birth_date': None,
+            'url': 'http://testserver/api/v1/users/1/',
+            'profile_pic': None
+        }])
+
+    def test_get_user(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username='vince',
+            email='vince@test.com',
+            first_name='Vincent',
+            last_name='Nyanga',
+            password='testpass123'
+        )
+        response = self.client.get('/api/v1/users/1/')
+        self.assertEqual(json.loads(response.content), {
+            'username': 'vince',
+            'email': 'vince@test.com',
+            'first_name': 'Vincent',
+            'last_name': 'Nyanga',
+            'gender': 'wont-say',
+            'birth_date': None,
+            'url': 'http://testserver/api/v1/users/1/',
+            'profile_pic': None
+        })
+
+    def test_update_user_unauthenticated_forbidden(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username='vince',
+            email='vince@test.com',
+            first_name='Vincent',
+            last_name='Nyanga',
+            password='testpass123'
+        )
+        response = self.client.put('/api/v1/users/1/', {
+            'username': 'vince',
+            'email': 'vince@test.com',
+            'first_name': 'Vincent',
+            'last_name': 'Nyanga',
+            'gender': 'male',
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_other_users_profile_forbidden(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username='vince',
+            email='vince@test.com',
+            first_name='Vincent',
+            last_name='Nyanga',
+            password='testpass123'
+        )
+        user2 = User.objects.create_user(
+            username='test',
+            password='testpass123',
+            email='test@email.com'
+        )
+
+        self.client.force_authenticate(user=user2)
+        
+        response = self.client.put('/api/v1/users/1/', {
+            'username': 'vince',
+            'email': 'vince@test.com',
+            'first_name': 'Vincent',
+            'last_name': 'Nyanga',
+            'gender': 'male',
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_user(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username='vince',
+            email='vince@test.com',
+            first_name='Vincent',
+            last_name='Nyanga',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=user)
+        response = self.client.put('/api/v1/users/1/', {
+            'username': 'vince',
+            'email': 'vince@test.com',
+            'first_name': 'Vincent',
+            'last_name': 'Nyanga',
+            'gender': 'male',
+        })
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), {
+            'username': 'vince',
+            'email': 'vince@test.com',
+            'first_name': 'Vincent',
+            'last_name': 'Nyanga',
+            'gender': 'male',
+            'birth_date': None,
+            'url': 'http://testserver/api/v1/users/1/',
+            'profile_pic': None
+        })
+
+    def test_delete_not_allowed(self):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username='vince',
+            email='vince@test.com',
+            first_name='Vincent',
+            last_name='Nyanga',
+            password='testpass123'
+        )
+        self.client.force_authenticate(user=user)
+        response = self.client.delete('/api/v1/users/1/')
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

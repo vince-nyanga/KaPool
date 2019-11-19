@@ -39,6 +39,10 @@ class Vehicle(models.Model):
         blank=True
     )
 
+    @property
+    def vehicle_name(self):
+        return f'{self.make} {self.model}'
+
     def __str__(self):
         return f'{self.make} {self.model} owned by {self.user}'
 
