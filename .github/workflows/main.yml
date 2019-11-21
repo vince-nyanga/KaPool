@@ -13,5 +13,9 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - uses: dschep/install-pipenv-action@v1
+    - name: Install Pipenv
+      uses: dschep/install-pipenv-action@v1
     - run: pipenv install
+    - run: pipenv shell
+    - name: Running tests
+      run: python manage.py test
