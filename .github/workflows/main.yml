@@ -19,3 +19,5 @@ jobs:
     - run: pipenv shell
     - name: Running tests
       run: python manage.py test
+    - name: exiting shell
+      run: exit
