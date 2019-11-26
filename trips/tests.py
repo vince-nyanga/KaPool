@@ -328,3 +328,102 @@ class TripApiTest(APITestCase):
         response = self.client.delete('/api/v1/trips/1/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Trip.objects.all().count(), 0)
+
+    def test_filter_by_origin(self):
+        create_data()
+        user = User.objects.get(pk=1)
+        vehicle = Vehicle.objects.get(pk=1)
+        origin = Place.objects.get(pk=1)
+        destination = Place.objects.get(pk=2)
+
+        trip = Trip(
+            user=user,
+            origin=origin,
+            destination=destination,
+            vehicle=vehicle,
+            trip_date=date.today()
+        )
+        trip.save()
+
+        response = self.client.get('/api/v1/trips/?origin=Origin')
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get('/api/v1/trips/?origin=origin')
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get('/api/v1/trips/?origin=invalid')
+        self.assertEqual(len(json.loads(response.content)), 0)
+
+    def test_filter_by_destination(self):
+        create_data()
+        user = User.objects.get(pk=1)
+        vehicle = Vehicle.objects.get(pk=1)
+        origin = Place.objects.get(pk=1)
+        destination = Place.objects.get(pk=2)
+
+        trip = Trip(
+            user=user,
+            origin=origin,
+            destination=destination,
+            vehicle=vehicle,
+            trip_date=date.today()
+        )
+        trip.save()
+
+        response = self.client.get('/api/v1/trips/?destination=Destination')
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get('/api/v1/trips/?destination=destination')
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get('/api/v1/trips/?destination=invalid')
+        self.assertEqual(len(json.loads(response.content)), 0)
+
+    def test_filter_by_seats(self):
+        create_data()
+        user = User.objects.get(pk=1)
+        vehicle = Vehicle.objects.get(pk=1)
+        origin = Place.objects.get(pk=1)
+        destination = Place.objects.get(pk=2)
+
+        trip = Trip(
+            user=user,
+            origin=origin,
+            destination=destination,
+            vehicle=vehicle,
+            trip_date=date.today()
+        )
+        trip.save()
+
+        response = self.client.get('/api/v1/trips/?num_seats=1')
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get('/api/v1/trips/?num_seats=2')
+        self.assertEqual(len(json.loads(response.content)), 0)
+
+    def test_filter_by_date(self):
+        create_data()
+        user = User.objects.get(pk=1)
+        vehicle = Vehicle.objects.get(pk=1)
+        origin = Place.objects.get(pk=1)
+        destination = Place.objects.get(pk=2)
+
+        trip = Trip(
+            user=user,
+            origin=origin,
+            destination=destination,
+            vehicle=vehicle,
+            trip_date=date.today()
+        )
+        trip.save()
+
+        date_format = '%Y-%m-%d'
+        tomorrow = date.today() + relativedelta(days=1)
+
+        response = self.client.get(
+            f'/api/v1/trips/?trip_date={date.today().strftime(date_format)}')
+        self.assertEqual(len(json.loads(response.content)), 1)
+
+        response = self.client.get(
+            f'/api/v1/trips/?trip_date={tomorrow.strftime(date_format)}')
+        self.assertEqual(len(json.loads(response.content)), 0)

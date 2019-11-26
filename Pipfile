@@ -11,6 +11,7 @@ django = "==2.2.5"
 python-dateutil = "*"
 pillow = "==6.2.0"
 djangorestframework = "==3.10.2"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"

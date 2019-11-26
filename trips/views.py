@@ -4,6 +4,7 @@ from shared.permissions import IsOwnerOrReadOnly
 
 from .models import Trip
 from .serializers import TripSerializer
+from .filters import TripFilter
 
 
 class TripViewSet(ModelViewSet):
@@ -13,6 +14,7 @@ class TripViewSet(ModelViewSet):
         IsOwnerOrReadOnly,
         IsAuthenticatedOrReadOnly,
     ]
+    filterset_class = TripFilter
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
