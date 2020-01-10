@@ -9,3 +9,4 @@ router.register('users', UserViewSet)
 router.register('places', PlaceViewSet)
 router.register('vehicles', VehicleViewSet)
 router.register('trips', TripViewSet)
+
