@@ -9,7 +9,7 @@ autopep8 = "*"
 [packages]
 django = "==2.2.8"
 python-dateutil = "*"
-pillow = "==9.0.0"
+pillow = "==9.3.0"
 djangorestframework = "==3.10.2"
 django-filter = "*"
 django-rest-auth = "*"
